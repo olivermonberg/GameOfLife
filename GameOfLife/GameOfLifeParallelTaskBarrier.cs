@@ -29,15 +29,14 @@ namespace GameOfLife
         }
         public void Run(int numberOfIterations)
         {
-            int numTasks = Environment.ProcessorCount;
-            var tasks = new Task[numTasks];
-
-            var stepBarrier = new Barrier(numTasks, _ => Swap(ref _curGrid, ref _newGrid));
-            int chunkSize = (_gridSize - 2) / numTasks;
-
-
             while (numberOfIterations > 0)
             {
+                int numTasks = Environment.ProcessorCount;
+                var tasks = new Task[numTasks];
+
+                var stepBarrier = new Barrier(numTasks, _ => Swap(ref _curGrid, ref _newGrid));
+                int chunkSize = (_gridSize - 2) / numTasks;
+
                 var locationsAlive = 0;
 
                 for (int i = 0; i < numTasks; i++)
@@ -45,7 +44,8 @@ namespace GameOfLife
                     int yStart = 1 + (chunkSize * i);
                     int yEnd = 0;
 
-                    if (i == numTasks - 1) //int yEnd = (i == numTasks - 1) ? _gridSize - 1 : yStart + chunkSize;
+                    //yEnd = (i == numTasks - 1) ? _gridSize - 1 : yStart + chunkSize;
+                    if (i == numTasks - 1) 
                     {
                         yEnd = _gridSize - 1;
                     }
@@ -74,7 +74,6 @@ namespace GameOfLife
                         
                         stepBarrier.SignalAndWait();
                     });
-                    
                 }
 
                 Console.WriteLine(locationsAlive);
